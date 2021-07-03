@@ -12,7 +12,7 @@
         (onCloseModal)="closeModal()"></ioa-book-detail>
 
     <ioa-paginated
-        (onChange)="getBooks($event)"
+        (onChange)="paginatedBook($event)"
         [currentPage]="bookPaginated.page"
         [total]="bookPaginated.totalPages"></ioa-paginated>
 </section>
