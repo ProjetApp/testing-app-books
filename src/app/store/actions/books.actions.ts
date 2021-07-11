@@ -1,4 +1,4 @@
-import { createAction, props } from "@ngrx/store";
+import { Action } from "@ngrx/store";
 import { Paginated } from "src/app/shared/models/interfaces/paginated.model";
 import { Book } from "../../modules/books/models/interfaces/book.model";
 
@@ -7,22 +7,26 @@ export const ADD_BOOK = 'ADD_BOOK';
 export const ADD_LIST_BOOKS = 'ADD_LIST_BOOKS';
 export const SET_LOADING = 'SET_LOADING';
 
-export const GetBooks = createAction(
-    GET_BOOKS,
-    props<{ page: number }>()
-)
+export class GetBooksAction implements Action {
+    type: string = GET_BOOKS;
+    
+    constructor(public payload?: number) {}
+}
 
-export const AddBook = createAction(
-    ADD_BOOK,
-    props<{ payload: Book }>()
-)
+export class AddBookAction implements Action {
+    type: string = ADD_BOOK;
 
-export const AddPaginatedBook = createAction(
-    ADD_LIST_BOOKS,
-    props<{ payload: Paginated<Book> }>()
-)
+    constructor(public payload?: Book) {}
+}
 
-export const SetLoading = createAction(
-    SET_LOADING,
-    props<{ payload: boolean }>()
-)
+export class AddPaginatedBookAction implements Action {
+    type: string = ADD_LIST_BOOKS;
+
+    constructor(public payload?: Paginated<Book>) {}
+}
+
+export class SetLoadingAction implements Action {
+    type: string = SET_LOADING;
+
+    constructor(public payload?: boolean) {}
+}

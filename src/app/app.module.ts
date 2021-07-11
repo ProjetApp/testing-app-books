@@ -11,12 +11,17 @@ import { AuthenticationModule } from './modules/authentication/authentication.mo
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpRequestInterceptor } from './shared/interceptor/http-request.interceptor';
-import { StoreModule } from '@ngrx/store';
+import { StoreConfig, StoreModule } from '@ngrx/store';
 import { bookReducer } from './store/reducers/books.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { BookEffect } from './store/effects/books.effects';
+import { BookState, initializeState } from './store/state/book.state';
+import { InitialState } from '@ngrx/store/src/models';
 
 const COMPONENTS = [AuthenticationModule, BooksModule];
+
+const initialState: InitialState<BookState> = initializeState();
+const storeConfig: StoreConfig<any> = { initialState };
 
 @NgModule({
   declarations: [
@@ -34,7 +39,12 @@ const COMPONENTS = [AuthenticationModule, BooksModule];
     }),
     RouterModule.forRoot(appRoutes),
     ...COMPONENTS,
-    StoreModule.forRoot({ books: bookReducer }),
+    StoreModule.forRoot(
+      { 
+        books: bookReducer,
+      },
+      storeConfig
+    ),
     EffectsModule.forRoot([ BookEffect ])
   ],
   providers: [
