@@ -1,25 +1,27 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Paginated } from "src/app/shared/models/interfaces/paginated.model";
 import { Book } from "../models/interfaces/book.model";
 import { BookService } from "../services/book.service";
 import { Store } from "@ngrx/store";
 import { BookState } from "src/app/store/state/book.state";
 import { GetBooksAction, SetLoadingAction } from "../../../store/actions/books.actions";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 const PAGE_DEFAULT = 1;
-
-
 @Component({
   selector: 'ioa-book',
   templateUrl: './book.component.html',
   styleUrls: ['./book.component.scss'],
 })
-export class BookComponent implements OnInit {
+export class BookComponent implements OnInit, OnDestroy {
 
   isLoading: boolean;
   isShowModal: boolean;
   bookPaginated: Paginated<Book>;
   bookDetail: Book;
+  
+  private ngUnsubscribe: Subject<boolean>;
 
   constructor(
     private store: Store<{ books: BookState }>,
@@ -28,6 +30,8 @@ export class BookComponent implements OnInit {
     this.isShowModal = false;
     this.bookPaginated = {} as Paginated<Book>;
     this.bookDetail = {} as Book;
+
+    this.ngUnsubscribe = new Subject();
   }
   
   ngOnInit(): void {
@@ -35,9 +39,10 @@ export class BookComponent implements OnInit {
 
     this.store
       .select(`books`)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((response) => {
         this.bookPaginated = response.paginatedBook;
-        this.isLoading = response.Loading;
+        this.isLoading = response.loading;
       });
   }
 
@@ -65,5 +70,9 @@ export class BookComponent implements OnInit {
         this.bookDetail = book
         this.isShowModal = true;
       });
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
   }
 }
